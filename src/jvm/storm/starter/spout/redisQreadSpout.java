@@ -17,9 +17,16 @@ import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 
-//manipulate json
+//////using org.json.simple in storm starter
 import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+
+
+
 //manipulate redis via jedis
 import redis.clients.jedis.Jedis;//add the jedis-2.1.0.jar to home/storm/lib; then manually add to project via project->properties->build path
 //log4j
@@ -29,7 +36,8 @@ import org.apache.log4j.Logger;
 public class redisQreadSpout extends BaseRichSpout {	
 	static Logger LOG = Logger.getLogger(redisQreadSpout.class);
 	private SpoutOutputCollector collector;
-	String host = "localhost"; 
+	//String host = "localhost"; //debug on localhost
+	String host = "ec2-54-224-95-128.compute-1.amazonaws.com";//aws_redis public url
 	int port = 6379;
 	//Queue<String> msgQ = new LinkedList<String>();
 	static Queue<String> msgQ = new LinkedList<String>();//need to be static var.
