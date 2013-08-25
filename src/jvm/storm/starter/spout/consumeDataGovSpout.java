@@ -43,8 +43,8 @@ import org.apache.log4j.Logger;
 public class consumeDataGovSpout extends BaseRichSpout {	
 	static Logger LOG = Logger.getLogger(redisQreadSpout.class);
 	private SpoutOutputCollector collector;
-	String host = "localhost"; //debug on localhost
-	//String host = "ec2-54-224-95-128.compute-1.amazonaws.com";//aws_redis public url
+	//String host = "localhost"; //debug on localhost
+	String host = "ec2-54-211-117-242.compute-1.amazonaws.com";//aws_redis public url
 	int port = 6379;
 	
 	BufferedReader reader = null;
@@ -120,22 +120,30 @@ public class consumeDataGovSpout extends BaseRichSpout {
 	 		    		
 			    	StringBuilder country = new StringBuilder();
 			    	StringBuilder posting = new StringBuilder();
-			    	country.append(simpleJsonObject.get("c"));//country
+//			    	country.append(simpleJsonObject.get("c"));//country
 			    	
 			    	//depends on the task, posting need to customized to it. 2 style.
 			    	
 			    	//style1:posting contains field of interest : hash, url, time, city name. json can be stored whole 
 //			    	posting.append(simpleJsonObject.get("h"));//hash
 //			    	posting.append(" ");
-			    	posting.append(simpleJsonObject.get("u"));//url
+//			    	posting.append(simpleJsonObject.get("u"));//url
 //			    	posting.append(" ");
 //			     	posting.append(simpleJsonObject.get("t"));//time
 //			     	posting.append(" ");
 //			     	posting.append(simpleJsonObject.get("cy"));//cityname
-			     	
+			    	
+			    	country.append(simpleJsonObject.get("c"));
+			    	posting.append(simpleJsonObject.get("u"));//url
+			    	//posting.append(simpleJsonObject.toJSONString());
+			    	
 //			     	//style2:posting contains json object as a whole
 //			     	posting.append(simpleJsonObject.toJSONString());
-			     	
+			    	
+			    	//style3: key is hash, json object as posting. stress the redis server
+//			    	country.append(simpleJsonObject.get("h"));
+//			    	posting.append(simpleJsonObject.toJSONString());
+			    	
 			     	String countryName = country.toString();
 			     	String postItem = posting.toString();
 			     	

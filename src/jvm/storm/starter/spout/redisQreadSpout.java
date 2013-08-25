@@ -37,7 +37,8 @@ public class redisQreadSpout extends BaseRichSpout {
 	static Logger LOG = Logger.getLogger(redisQreadSpout.class);
 	private SpoutOutputCollector collector;
 	//String host = "localhost"; //debug on localhost
-	String host = "ec2-54-224-95-128.compute-1.amazonaws.com";//aws_redis public url
+	String host = "ec2-54-226-170-94.compute-1.amazonaws.com";//aws_redis public url
+
 	int port = 6379;
 	//Queue<String> msgQ = new LinkedList<String>();
 	static Queue<String> msgQ = new LinkedList<String>();//need to be static var.
@@ -71,7 +72,7 @@ public class redisQreadSpout extends BaseRichSpout {
 	                        //bplot will return nil when no item in Q		
 	                        		
 	                        if(res == null){
-	                        	System.out.println("res is empty Q");
+	                        	//System.out.println("res is empty Q");//debug only
 	                        	continue;
 	                        }
 	                        	                        		
@@ -105,10 +106,10 @@ public class redisQreadSpout extends BaseRichSpout {
 	public void nextTuple() {
 		try{
 			while(!msgQ.isEmpty()){
-				System.out.println("inside nextTuple");
+				System.out.println("inside nextTuple");//debug only
 				String theQtix = msgQ.poll();
 				if(!theQtix.isEmpty()){
-			    System.out.println("Q not empty");
+			    //System.out.println("Q not empty");
 	            //collector.emit(new Values(msgQ.poll()));//remove head of Q| null ptr exception here
 			    collector.emit(new Values(theQtix));
 				}

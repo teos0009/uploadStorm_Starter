@@ -21,16 +21,17 @@ public class myClickConsumeTopo {
 
         //Topology definition
 		TopologyBuilder builder = new TopologyBuilder();
-		builder.setSpout("consumeDataGovSpout",new consumeDataGovSpout());
-		builder.setBolt("clicksRtiiBolt", new clicksRtiiBolt()) //set 2 instances of bolt with ",2"
-		    //  .shuffleGrouping("consumeDataGovSpout");//sending tuples to bolt at random
+		builder.setSpout("consumeDataGovSpout",new consumeDataGovSpout())
+		.setNumTasks(2);//set 2 task per executor
+		builder.setBolt("clicksRtiiBolt", new clicksRtiiBolt(),2) //set 2 instances of bolt with ",2"
+		.setNumTasks(2)//set 2 task per executor to take adv of rebalance
+		//  .shuffleGrouping("consumeDataGovSpout");//sending tuples to bolt at random
 		.fieldsGrouping("consumeDataGovSpout", new Fields("country"));//mod@declarer
 		//fields grouping with "country" ensure tuple will be send to the same clicksRtiiBolt
 		
-		
         //Configuration
 		Config conf = new Config();
-		conf.setNumWorkers(2);
+		conf.setNumWorkers(2);//default is 2
 		conf.setDebug(false);
 		conf.put(Config.TOPOLOGY_MAX_SPOUT_PENDING, 1);
         

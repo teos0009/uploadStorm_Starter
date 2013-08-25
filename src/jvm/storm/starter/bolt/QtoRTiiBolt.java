@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
@@ -28,7 +29,7 @@ public class QtoRTiiBolt extends BaseBasicBolt {
     //Map<String,ArrayList<String>>keyval2;//using arrlst s.t sort can be done on array list 
 	Jedis jedis;
 	//String host = "localhost"; //debug local host
-	String host = "ec2-54-224-95-128.compute-1.amazonaws.com";//aws redis
+	String host = "ec2-54-226-170-94.compute-1.amazonaws.com";//aws redis
 	int port = 6379;
     
 	private void reconnect() {
@@ -76,7 +77,7 @@ public class QtoRTiiBolt extends BaseBasicBolt {
 	@Override
 	public void execute(Tuple input, BasicOutputCollector collector) {
 		String str = input.getString(0);
-       System.out.println("item received from redis Q " + str);
+       System.out.println("item received from redis Q " + str);//debug only
        insertRTII(str);
        
        
@@ -84,9 +85,16 @@ public class QtoRTiiBolt extends BaseBasicBolt {
 	
 	public void insertRTII(String txt){
 		String [] terms = txt.split("\\s+"); 
-		
-		 txt = terms[0] + " " + terms[1]+ " " + count;
+		//==insert a random for count to differentiate value. peculiar to apachebench test only.
+		Random rand = new Random();
+		int rnd = rand.nextInt();
+		count = rnd;
+		//=====================
+		txt = terms[0] + " " + terms[1]+ " " + count;
 		jedis.zadd(terms[2], count, txt);//
 		count++;
+		
+	
+		
 		}//end insertRedis	
 }//end class

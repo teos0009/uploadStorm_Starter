@@ -18,26 +18,29 @@ public class myreadQTopo {
 
         //Configuration
 		Config conf = new Config();
-		conf.setNumWorkers(2);//020813:set 2 worker process; aws storm deploy no worker assigned
+		conf.setNumWorkers(2);//020813:set 2 worker process; aws storm deploy no worker assigned//140813:set 4worker for 4 sup instances
 		conf.setDebug(false);
         //Topology run
 		conf.put(Config.TOPOLOGY_MAX_SPOUT_PENDING, 1);
 		
         //Topology definition
 		TopologyBuilder builder = new TopologyBuilder();
-		builder.setSpout("redisQreadSpout",new redisQreadSpout());
-		builder.setBolt("QtoRTiiBolt", new QtoRTiiBolt())//.fieldsGrouping("redisQreadSpout", new Fields("items"));//mod@declarer
+		builder.setSpout("redisQreadSpout",new redisQreadSpout())
+		.setNumTasks(2);//,2 to put 2 instances
+		builder.setBolt("QtoRTiiBolt", new QtoRTiiBolt())
+		.setNumTasks(2)
+		//,2 to put 2 instances//.fieldsGrouping("redisQreadSpout", new Fields("items"));//mod@declarer
 		.shuffleGrouping("redisQreadSpout");//use random shuffle
 		
 
 		
-		/*
-		//local mode
-		LocalCluster cluster = new LocalCluster();//use local mode
-		cluster.submitTopology("readQtopo", conf, builder.createTopology());
-		Thread.sleep(60000);//run for 5min *60 = 300000ms only. run forever remove this line
-		cluster.shutdown();
-		*/
+		
+//		//local mode + redis + redis works
+//		LocalCluster cluster = new LocalCluster();//use local mode
+//		cluster.submitTopology("readQtopo", conf, builder.createTopology());
+//		Thread.sleep(60000);//run for 5min *60 = 300000ms only. run forever remove this line
+//		cluster.shutdown();
+		
 				
 		//using remote mode
         StormSubmitter.submitTopology("myReadQtopo", conf, builder.createTopology());

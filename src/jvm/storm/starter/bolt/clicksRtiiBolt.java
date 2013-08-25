@@ -24,7 +24,7 @@ public class clicksRtiiBolt extends BaseBasicBolt {
 	Integer count;
 	Jedis jedis;
 	//String host = "localhost"; //debug local host
-	String host = "ec2-54-227-53-76.compute-1.amazonaws.com";//aws redis
+	String host = "ec2-54-211-117-242.compute-1.amazonaws.com";//aws redis
 	int port = 6379;
     
 	private void reconnect() {
@@ -61,7 +61,7 @@ public class clicksRtiiBolt extends BaseBasicBolt {
 		String str1 = input.getString(1);
 		String txt = input.getStringByField("country");//from spout declareOutputFields
 		String posting = input.getStringByField("post");
-       System.out.println("txt: "+txt+" "+"posting:"+posting);
+       //System.out.println("txt: "+txt+" "+"posting:"+posting);//debug only
        insertUrlVisitedByCountry(txt,posting);
        
        
@@ -75,8 +75,9 @@ public class clicksRtiiBolt extends BaseBasicBolt {
         if(val == 0){
         	double score = 0;
         	score = jedis.zscore(txt, posting);
-        	score = score + 1;//dup url in same country increase the score/count
-        	jedis.zincrby(txt, score, posting);
+        	score = score + 1;//dup url in same country increase the score/count//manual method incr
+        	//jedis.zadd(txt, score, posting);//score will not be updated this way. either del and reinsert or use incryby
+        	jedis.zincrby(txt, 1, posting);//incr by 1 
         	
         }
 		
